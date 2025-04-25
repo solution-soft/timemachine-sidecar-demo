@@ -1,0 +1,7 @@
+.env
+ssstm/log
+ssstm/data
+ssstm/etc
+ssstm/lib
+ssstm/lib32
+ssstm/lib64

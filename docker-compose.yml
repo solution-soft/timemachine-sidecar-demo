@@ -1,0 +1,25 @@
+services:
+
+  sidecar:
+    image: solutionsoft/timemachine-sidecar:latest
+    volumes:
+      - "./ssstm:/opt/ssstm:z"
+    ports:
+      - 127.0.0.1:7800:7800
+
+  java:
+    image: openjdk:8u272-jre-slim
+    depends_on:
+      - sidecar
+    environment:
+      TM_SERVER_INFO: "sidecar:5777"
+    user: www-data
+    working_dir: /usr/src/myapp
+    volumes:
+      - "./ssstm:/opt/ssstm:z"
+      - "./ssstm/etc/ld.so.preload:/etc/ld.so.preload:ro"
+      - "./app:/usr/src/myapp"
+    ports:
+      - 127.0.0.1:8080:8080
+    command: |
+      java -jar virtualclock-0.0.2-SNAPSHOT.jar
