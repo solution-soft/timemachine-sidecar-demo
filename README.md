@@ -2,7 +2,7 @@
 
 This repository provides a demonstration of SolutionSoft's Time Machine product using a Docker Compose setup with a sidecar pattern.
 
-Time Machine is a software product that provides virtual clocks to applications running in a Linux environment. It works by preloading a shared library into the application's process space, intercepting system calls related to time.
+**Time Machine for containers** is a software product that provides virtual clocks to applications running in a Linux environment. It works by preloading a shared library into the application's process space, intercepting system calls related to time.
 
 In this demonstration, two containers are managed by Docker Compose:
 1.  **`sidecar`**: Runs the Time Machine agent (`tmagent`) which manages the virtual clocks.
@@ -49,24 +49,46 @@ The `java` container is configured to depend on the `sidecar` container, ensurin
 
 Once the containers are up and running, you can interact with the Time Machine agent and the demo application.
 
-1.  **Check the initial time:**
+1.  **Check Time Machine status:**
+    Access the Time Machine agent (`tmagent`) running in the `sidecar` container via port 7800.
+    ```bash
+    curl "http://localhost:7800/tmapp/getstatus"
+    ```
+    Expected Output (may vary slightly):
+    ```json
+    [{"Licensed":"yes"},{"Floating":"yes"},{"Suspended":"no"},{"Version":"18.03"},{"Release":"76"},{"Status":"Running"},{"TMVersion":"18.03R76"},{"Timezone":"Etc/UTC"},{"System":"linux"},{"Hostname":"5d3c9f5a3ad1"},{"CPUCount":1},{"SystemID":""}]
+    ```
+
+2.  **Check current timestamp from java container:**
     Access the Spring Boot application running in the `java` container via port 8080.
     ```bash
-    curl "http://localhost:8080/tmdemo/gettime"
+    curl http://localhost:8080/tmdemo/gettime
     ```
-    This will show the current system time as seen by the application.
+    Expected Output (timestamp will vary):
+    ```json
+    {"seq":1,"pid":1,"username":"www-data","hostname":"37d0de6bcab8","timestamp":"2025-04-26 00:40:38 UTC"}
+    ```
+    This shows the current system time as seen by the application *before* any virtual clock is applied.
 
-2.  **Set a virtual clock:**
-    Interact with the Time Machine agent (`tmagent`) running in the `sidecar` container via port 7800.
+3.  **Set a virtual clock:**
+    Use the Time Machine agent API to set a relative virtual clock.
     ```bash
     curl "http://localhost:7800/tmapp/addrelclock?procid=-1&year=5"
     ```
     This command sets a relative virtual clock for *all* processes (`procid=-1`) managed by this agent, advancing the perceived year by 5 years.
+    Expected Output (values will vary, especially timestamp):
+    ```json
+    {"Floating":"yes","Licensed":"yes","Suspended":"no","cmds":[],"day":0,"gids":[],"hour":0,"minute":0,"origin":1745628068,"persist":"False","platform":"linux","procids":["@all"],"relative":1,"speed":1,"timestamp":"20300426004108","uids":[],"year":5}
+    ```
 
-3.  **Verify the clock change:**
+4.  **Verify the clock change:**
     Check the time from the Spring Boot application again.
     ```bash
-    curl "http://localhost:8080/tmdemo/gettime"
+    curl http://localhost:8080/tmdemo/gettime
+    ```
+    Expected Output (timestamp will be approximately 5 years ahead of the previous output):
+    ```json
+    {"seq":2,"pid":1,"username":"www-data","hostname":"37d0de6bcab8","timestamp":"2030-04-26 00:41:48 UTC"}
     ```
     You should now see the time reported by the application is 5 years in the future compared to the initial time.
 
