@@ -1,7 +1,10 @@
 services:
 
   sidecar:
+    # For regular Docker / Kubernetes service
     image: solutionsoft/timemachine-sidecar:latest
+    # For Kubernetes service mesh
+    #image: solutionsoft/timemachine-sidecar:latest-mesh
     environment:
       - TM_LICHOST=${TM_LICHOST}
       - TM_LICPORT=${TM_LICPORT}
