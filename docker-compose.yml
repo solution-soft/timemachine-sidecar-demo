@@ -2,6 +2,10 @@ services:
 
   sidecar:
     image: solutionsoft/timemachine-sidecar:latest
+    environment:
+      - TM_LICHOST=${TM_LICHOST}
+      - TM_LICPORT=${TM_LICPORT}
+      - TM_LICPASS=${TM_LICPASS}
     volumes:
       - "./ssstm:/opt/ssstm:z"
     ports:
