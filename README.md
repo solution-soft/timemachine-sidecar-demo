@@ -6,7 +6,7 @@ This repository provides a demonstration of SolutionSoft's Time Machine product 
 
 In this demonstration, two containers are managed by Docker Compose:
 1.  **`sidecar`**: Runs the Time Machine agent (`tmagent`) which manages the virtual clocks.
-2.  **`java`**: Runs a simple Spring Boot application (`tmdemo`) that displays the current time.
+2.  **`java`**: Runs a simple Spring Boot application (`virtualclock`) that displays the current time.
 
 The `java` container is configured to depend on the `sidecar` container, ensuring the Time Machine agent is available before the application starts.
 
@@ -95,7 +95,7 @@ Once the containers are up and running, you can interact with the Time Machine a
 ## Directory Structure
 
 *   `ssstm/`: Contains files related to Time Machine persistence (e.g., configuration).
-*   `app/`: Contains the Java JAR file (`tmdemo-0.0.1-SNAPSHOT.jar`) for the Spring Boot application.
+*   `app/`: Contains the Java JAR file (`virtualclock-0.0.2-SNAPSHOT.jar`) for the Spring Boot application.
 *   `sample.env`: A template file for licensing configuration.
 *   `docker-compose.yml`: Defines the services, networks, and volumes for the Docker containers.
 
