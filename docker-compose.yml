@@ -22,8 +22,8 @@ services:
     volumes:
       - "./ssstm:/opt/ssstm:z"
       - "./ssstm/etc/ld.so.preload:/etc/ld.so.preload:ro"
-      - "./app:/usr/src/myapp"
+      - "./apps:/usr/src/myapp"
     ports:
       - 127.0.0.1:8080:8080
     command: |
-      java -jar virtualclock-0.0.2-SNAPSHOT.jar
+      java -jar tmdemo-0.0.3-SNAPSHOT.jar
